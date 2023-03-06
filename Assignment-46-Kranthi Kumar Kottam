@@ -1,0 +1,66 @@
+1. Commands that you used during the assignment.
+
+	kubectl delete all --all;
+	cd $home
+	yum install git -y
+	git clone  https://github.com/ashishrpandey/example-voting-app
+	cd /root/example-voting-app/k8s-specifications
+
+	kubectl apply -f .
+  kubectl get all
+  kubectl get po -o wide
+  kubectl delete pod <podname>
+  kubectl logs <podname>	
+
+2. snapshot of logs (wherever possible)
+
+	[root@ip-172-31-12-103 k8s-specifications]# kubectl logs worker-dd46d7584-bflsb
+	Connected to db
+	Found redis at 10.96.70.178
+	Connecting to redis
+	[root@ip-172-31-12-103 k8s-specifications]#
+
+	[root@ip-172-31-12-103 k8s-specifications]# kubectl logs vote-94849dc97-fcfb4
+	[2023-03-06 08:35:59 +0000] [1] [INFO] Starting gunicorn 20.1.0
+	[2023-03-06 08:35:59 +0000] [1] [INFO] Listening at: http://0.0.0.0:80 (1)
+	[2023-03-06 08:35:59 +0000] [1] [INFO] Using worker: sync
+	[2023-03-06 08:35:59 +0000] [6] [INFO] Booting worker with pid: 6
+	[2023-03-06 08:35:59 +0000] [7] [INFO] Booting worker with pid: 7
+	[2023-03-06 08:35:59 +0000] [8] [INFO] Booting worker with pid: 8
+	[2023-03-06 08:35:59 +0000] [9] [INFO] Booting worker with pid: 9
+	[root@ip-172-31-12-103 k8s-specifications]#
+
+
+	[root@ip-172-31-12-103 k8s-specifications]# kubectl logs result-5d57b59f4b-wjc94
+	Mon, 06 Mar 2023 08:27:47 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server.js:73:9
+	Mon, 06 Mar 2023 08:27:47 GMT body-parser deprecated undefined extended: provide extended option at ../node_modules/body-parser/index.js:104:29
+	App running on port 80
+	Connected to db
+	Error performing query: error: relation "votes" does not exist
+	[root@ip-172-31-12-103 k8s-specifications]#
+
+3. your comment on WHY result app STOPPED working after db pod stop
+   
+   When DB pod is deleted new pod is created with different pod name and worker and result pods restarted their containers without disturbing their pod. 
+   From the Front End Entire Application is working also result app, however if result pod connect to old deleted DB pod result app may not work.  
+   DB pod lost Entire data (votes) from pod after creating new pod.
+
+4. your answer to HOW YOU MADE THE RESULT POD work.
+
+   After deleting DB pod, worker and result pods restarted. These pods are restarted in program because of exception handling or if-else condition is handled properly. 
+   It can be handled from yaml also by adding FailureOnRestart, either ways in yaml and code it cab be handled.
+   After restart of result pod, it will get data from new DB pod. Application will work from frontend.
+   
+5. Some jargons (just names are enough- dont need sentences) that you learnt from the 40-hour Training session
+
+   Docker, Docker Engine, Docker Images, Container, dockerhub, Dockerfile, 
+   Process, network, storage isolation
+   Kubernetes, Master-worker nodes, cluster, pods, kubectl, API, Controllers, etcd, scheduler, CLI, yaml.
+   Replication controller, Replica set, jobs, DaemonSet, Service, Nodeport, Deployment, Load balancer.
+   Volumes, Persistent volume, Persistent Volume claim.\
+   
+6. what happens to the voting and result app after deleting ?
+
+   After deleting voting pod new pod/new container is taken up and from front end application is working. 
+   After deleting worker pod new pod/new container is taken up and from front end application is working. Old worker pod logs are deleted. New worker pod is connected to db and redis.
+   
