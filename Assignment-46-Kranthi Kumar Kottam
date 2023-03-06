@@ -7,10 +7,10 @@
 	cd /root/example-voting-app/k8s-specifications
 
 	kubectl apply -f .
-  kubectl get all
-  kubectl get po -o wide
-  kubectl delete pod <podname>
-  kubectl logs <podname>	
+        kubectl get all
+        kubectl get po -o wide
+        kubectl delete pod <podname>
+        kubectl logs <podname>	
 
 2. snapshot of logs (wherever possible)
 
